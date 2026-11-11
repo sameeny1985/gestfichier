@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Mon profil{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Mon profil</h1>
+    <div class="card border-0 shadow-sm" style="max-width: 500px;">
+        <div class="card-body">
+            <p><strong>Nom :</strong> {{ user.get_full_name }}</p>
+            <p><strong>E-mail :</strong> {{ user.email }}</p>
+            <p><strong>Rôle :</strong> {{ user.get_role_display }}</p>
+            <p><strong>Entreprise :</strong> {{ user.company|default:"—" }}</p>
+            <p><strong>Département :</strong> {{ user.department|default:"—" }}</p>
+            <p><strong>Quota :</strong> {{ user.used_storage_mb }} / {{ user.storage_quota_mb }} Mo ({{ user.storage_usage_percent }}%)</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
