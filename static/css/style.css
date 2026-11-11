@@ -1,6 +1,0 @@
-body { min-height: 100vh; }
-.navbar-brand { letter-spacing: -0.5px; }
-#dropZone { transition: all 0.2s ease; cursor: pointer; }
-#dropZone:hover { border-color: var(--bs-primary) !important; }
-.card { border-radius: 0.75rem; }
-.table th { font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.03em; }
