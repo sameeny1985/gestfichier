@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Utilisateurs{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0"><i class="bi bi-people"></i> Gestion des utilisateurs</h1>
+        <a href="{% url 'accounts:user_create' %}" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> Nouvel utilisateur
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>E-mail (identifiant)</th>
+                        <th>Nom</th>
+                        <th>Rôle</th>
+                        <th>Entreprise / Département</th>
+                        <th>Actif</th>
+                        <th>Quota (Mo)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td><code>{{ u.email }}</code></td>
+                        <td>{{ u.get_full_name|default:"—" }}</td>
+                        <td><span class="badge bg-secondary">{{ u.get_role_display }}</span></td>
+                        <td>
+                            {{ u.company|default:"—" }}
+                            {% if u.department %}<br><small class="text-muted">{{ u.department }}</small>{% endif %}
+                        </td>
+                        <td>
+                            {% if u.is_active %}<span class="text-success">Oui</span>
+                            {% else %}<span class="text-danger">Non</span>{% endif %}
+                        </td>
+                        <td>{{ u.storage_quota_mb }}</td>
+                        <td class="text-end">
+                            <a href="{% url 'accounts:user_edit' u.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i> Modifier / Mot de passe
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" class="text-center text-muted py-4">Aucun utilisateur</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-3 small">
+        <i class="bi bi-info-circle"></i>
+        Les mots de passe sont stockés de façon sécurisée (hash) et ne peuvent pas être affichés.
+        Vous pouvez uniquement en définir un nouveau.
+    </div>
+</div>
+{% endblock %}
