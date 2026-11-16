@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Mon département{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="h3 mb-1"><i class="bi bi-diagram-3"></i> Département : {{ department.name }}</h1>
+    <p class="text-muted mb-4">{{ department.description|default:"" }}</p>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <strong><i class="bi bi-people"></i> Membres du département</strong>
+                    <span class="badge bg-primary">{{ members|length }}</span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for m in members %}
+                    <li class="list-group-item">
+                        <div class="fw-medium">{{ m.get_full_name|default:m.email }}</div>
+                        <small class="text-muted">{{ m.email }}</small>
+                        <div><span class="badge bg-secondary">{{ m.get_role_display }}</span></div>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">Aucun membre dans ce département.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <strong><i class="bi bi-folder2-open"></i> Fichiers du département</strong>
+                    <a href="{% url 'files:browser' %}" class="btn btn-sm btn-outline-primary">Ouvrir l'explorateur</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nom</th>
+                                <th>Propriétaire</th>
+                                <th>Taille</th>
+                                <th>Modifié</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in files %}
+                            <tr>
+                                <td><i class="bi bi-file-earmark me-1"></i>{{ f.name }}</td>
+                                <td><small>{{ f.owner.get_full_name|default:f.owner.email }}</small></td>
+                                <td>{{ f.size_human }}</td>
+                                <td>{{ f.updated_at|date:"d/m/Y H:i" }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'files:download' f.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i></a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-center text-muted py-4">Aucun fichier dans ce département.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
