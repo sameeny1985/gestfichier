@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Départements{% endblock %}
+{% block content %}
+<div class="container">
+{% if is_manager_view %}
+    <h1 class="h3 mb-1"><i class="bi bi-diagram-3"></i> Département : {{ department.name }}</h1>
+    <p class="text-muted mb-4">{{ department.description|default:"" }}</p>
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <strong><i class="bi bi-people"></i> Membres</strong>
+                    <span class="badge bg-primary">{{ members|length }}</span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for m in members %}
+                    <li class="list-group-item">
+                        <div class="fw-medium">{{ m.get_full_name|default:m.email }}</div>
+                        <small class="text-muted">{{ m.email }}</small>
+                        <div><span class="badge bg-secondary">{{ m.get_role_display }}</span></div>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">Aucun membre.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white"><strong><i class="bi bi-folder2-open"></i> Fichiers du département</strong></div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead class="table-light">
+                            <tr><th>Nom</th><th>Propriétaire</th><th>Taille</th><th>Modifié</th><th></th></tr>
+                        </thead>
+                        <tbody>
+                            {% for f in files %}
+                            <tr>
+                                <td><i class="bi bi-file-earmark me-1"></i>{{ f.name }}</td>
+                                <td><small>{{ f.owner.get_full_name|default:f.owner.email }}</small></td>
+                                <td>{{ f.size_human }}</td>
+                                <td>{{ f.updated_at|date:"d/m/Y H:i" }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'files:download' f.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i></a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-center text-muted py-4">Aucun fichier.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <h1 class="h3 mb-4"><i class="bi bi-diagram-3"></i> Tous les départements</h1>
+    {% if not departments_data %}
+        <div class="alert alert-info">Aucun département. Créez-en dans <a href="{% url 'accounts:department_list' %}">Départements</a>.</div>
+    {% endif %}
+    {% for item in departments_data %}
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <strong class="fs-5">{{ item.department.name }}</strong>
+                {% if item.department.company %}<span class="text-muted"> — {{ item.department.company.name }}</span>{% endif %}
+                {% if item.department.description %}<div class="small text-muted">{{ item.department.description }}</div>{% endif %}
+            </div>
+            <div>
+                <span class="badge bg-primary">{{ item.member_count }} membre(s)</span>
+                <span class="badge bg-secondary">{{ item.file_count }} fichier(s)</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <h6 class="text-muted">Membres</h6>
+                    <ul class="list-group list-group-flush small">
+                        {% for m in item.members %}
+                        <li class="list-group-item px-0">
+                            {{ m.get_full_name|default:m.email }}
+                            <span class="badge bg-light text-dark">{{ m.get_role_display }}</span>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item px-0 text-muted">Aucun membre</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-8">
+                    <h6 class="text-muted">Fichiers récents</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead><tr><th>Nom</th><th>Propriétaire</th><th>Taille</th><th></th></tr></thead>
+                            <tbody>
+                                {% for f in item.files %}
+                                <tr>
+                                    <td>{{ f.name }}</td>
+                                    <td><small>{{ f.owner.email }}</small></td>
+                                    <td>{{ f.size_human }}</td>
+                                    <td><a href="{% url 'files:download' f.id %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i></a></td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="4" class="text-muted">Aucun fichier</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+</div>
+{% endblock %}
